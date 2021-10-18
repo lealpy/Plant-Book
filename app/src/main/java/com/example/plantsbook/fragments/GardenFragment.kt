@@ -43,9 +43,9 @@ class GardenFragment : Fragment() {
         binding.recyclerView.adapter = adapter
 
         //Восстанавливаем ранее добавленные растения в RecyclerView
-        var listNew = listOf<Plant>()
-        dataModel.messageForGardenFragment.observe(activity as LifecycleOwner, { listNew = it })
-        adapter.addSomePlants(listNew)
+        var plantLiveDataList = listOf<Plant>()
+        dataModel.messageForGardenFragment.observe(activity as LifecycleOwner, { plantLiveDataList = it })
+        adapter.addSomePlants(plantLiveDataList)
 
         //Добавляем новое растение
         binding.buttonAdd.setOnClickListener {
