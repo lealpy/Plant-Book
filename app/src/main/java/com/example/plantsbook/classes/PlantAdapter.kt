@@ -41,7 +41,12 @@ class PlantAdapter : RecyclerView.Adapter<PlantAdapter.PlantHolder>() {
 
     fun addSomePlants(list : List<Plant>){
         plantListForRecyclerView.addAll(list)
-        notifyDataSetChanged()
+        notifyDataSetChanged() // Перерисовка при изменении данных
+    }
+
+    fun deletePlant(index : Int) {
+        plantListForRecyclerView.removeAt(index)
+        notifyDataSetChanged() // Перерисовка при изменении данных
     }
 
 }
