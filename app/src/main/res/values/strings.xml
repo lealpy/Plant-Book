@@ -1,0 +1,22 @@
+<resources>
+
+    <string name="app_name">Хищные растения</string>
+
+    <string name="plant">Растение</string>
+
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+
+    <string name="book">Справочник</string>
+
+    <string name="main_activity_tittle">Список растений</string>
+
+    <string name="zhirianka">Жирянка</string>
+    <string name="muholovka">Венерина мухоловка</string>
+    <string name="nepentes">Непентес</string>
+    <string name="rosianka">Росянка</string>
+    <string name="sarracenia">Саррацения</string>
+    <string name="puzirchatka">Пузырчатка</string>
+    <string name="darlingtonia">Дарлингтония</string>
+
+</resources>
