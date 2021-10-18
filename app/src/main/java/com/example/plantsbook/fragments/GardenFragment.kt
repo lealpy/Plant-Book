@@ -49,10 +49,10 @@ class GardenFragment : Fragment() {
 
         //Добавляем новое растение
         binding.buttonAdd.setOnClickListener {
-            var index = (0..plantList.lastIndex).random()
-            val plant = Plant(plantList[index].name, plantList[index].imageID)
+            var plantListRandomIndex = (0..plantList.lastIndex).random()
+            val plant = Plant(plantList[plantListRandomIndex].name, plantList[plantListRandomIndex].imageID)
             adapter.addPlant(plant)
-            index ++
+            plantListRandomIndex ++
             binding.recyclerView.smoothScrollToPosition(adapter.getItemCount()-1) // Автоматическая прокрутка вниз
             dataModel.messageForGardenFragment.value = adapter.plantListForRecyclerView // Сохраняем список отрисованных элементов в LiveData
         }
