@@ -40,7 +40,6 @@ class PlantAdapter : RecyclerView.Adapter<PlantAdapter.PlantHolder>() {
     }
 
     fun addSomePlants(list : List<Plant>){
-        plantListForRecyclerView.clear()
         plantListForRecyclerView.addAll(list)
         notifyDataSetChanged()
     }

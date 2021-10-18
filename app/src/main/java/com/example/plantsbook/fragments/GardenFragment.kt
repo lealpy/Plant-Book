@@ -30,15 +30,7 @@ class GardenFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-         val listTest = listOf (muholovka, darlingtonia, zhirianka, nepentes)
-        adapter.addSomePlants(listTest)
-
-        dataModel.messageForGardenFragment.observe(activity as LifecycleOwner, {
-            adapter.addSomePlants(it) //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        })
-
-        init()
+        initRecyclerView()
     }
 
     companion object {
@@ -46,9 +38,16 @@ class GardenFragment : Fragment() {
         fun newInstance() = GardenFragment()
     }
 
-    private fun init() {
+    private fun initRecyclerView() {
         binding.recyclerView.layoutManager = GridLayoutManager(activity,3) // 3 - кол-во элементов в строке
         binding.recyclerView.adapter = adapter
+
+        //Восстанавливаем ранее добавленные растения в RecyclerView
+        var listNew = listOf<Plant>()
+        dataModel.messageForGardenFragment.observe(activity as LifecycleOwner, { listNew = it })
+        adapter.addSomePlants(listNew)
+
+        //Добавляем новое растение
         binding.buttonAdd.setOnClickListener {
             var index = (0..plantList.lastIndex).random()
             val plant = Plant(plantList[index].name, plantList[index].imageID)
@@ -59,4 +58,10 @@ class GardenFragment : Fragment() {
         }
     }
 }
+
+
+
+
+
+
 
