@@ -5,12 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ScrollView
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LifecycleOwner
-import com.example.plantsbook.R
+import com.example.plantsbook.classes.Plant
 import com.example.plantsbook.databinding.FragmentPlantInfoBinding
-
 
 class PlantInfoFragment : Fragment() {
 
@@ -26,18 +25,22 @@ class PlantInfoFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-        dataModel.messageForPlantInfoFragment.observe(activity as LifecycleOwner, {
-                 binding.tittlePlantInfo.text = it.name
-                 binding.imagePlantInfo.setImageResource(it.imageID)
-                 binding.descriptionPlantInfo.text = it.description
+        dataModel.plantLiveData.observe(activity as LifecycleOwner, { _plant ->
+                 binding.tittlePlantInfo.text = _plant.name
+                 binding.imagePlantInfo.setImageResource(_plant.imageID)
+                 binding.descriptionPlantInfo.text = _plant.description
+                 binding.buttonAddPlant.setOnClickListener {
+                     var plantListForAddButton = dataModel.plantListLiveData.value ?: mutableListOf<Plant>()
+                     plantListForAddButton.add(_plant)
+                     dataModel.plantListLiveData.value = plantListForAddButton // Сохраняем список добавленных элементов в LiveData
+                     Toast.makeText(getActivity(), "Добавлено растение ${_plant.name}", Toast.LENGTH_SHORT).show()
+                 }
         })
-
     }
 
     companion object {
         @JvmStatic
         fun newInstance() = PlantInfoFragment()
-
     }
+
 }

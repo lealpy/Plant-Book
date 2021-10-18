@@ -1,7 +1,6 @@
 package com.example.myapplication
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -44,17 +43,17 @@ class GardenFragment : Fragment() {
 
         //Восстанавливаем ранее добавленные растения в RecyclerView
         var plantLiveDataList = listOf<Plant>()
-        dataModel.messageForGardenFragment.observe(activity as LifecycleOwner, { plantLiveDataList = it })
+        dataModel.plantListLiveData.observe(activity as LifecycleOwner, { plantLiveDataList = it })
         adapter.addSomePlants(plantLiveDataList)
 
         //Добавляем новое растение
-        binding.buttonAdd.setOnClickListener {
+        binding.buttonAddRandomPlant.setOnClickListener {
             var plantListRandomIndex = (0..plantList.lastIndex).random()
             val plant = Plant(plantList[plantListRandomIndex].name, plantList[plantListRandomIndex].imageID)
             adapter.addPlant(plant)
             plantListRandomIndex ++
             binding.recyclerView.smoothScrollToPosition(adapter.getItemCount()-1) // Автоматическая прокрутка вниз
-            dataModel.messageForGardenFragment.value = adapter.plantListForRecyclerView // Сохраняем список отрисованных элементов в LiveData
+            dataModel.plantListLiveData.value = adapter.plantListForRecyclerView // Сохраняем список отрисованных элементов в LiveData
         }
     }
 }

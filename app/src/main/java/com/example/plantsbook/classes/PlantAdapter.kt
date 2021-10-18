@@ -13,14 +13,14 @@ class PlantAdapter : RecyclerView.Adapter<PlantAdapter.PlantHolder>() {
 
     class PlantHolder(item : View) : RecyclerView.ViewHolder(item) {
         val binding = PlantItemBinding.bind(item)
-        //with(binding) - ассоциирует все команды с binding. Используем чтобы не писать в каждой строчке функции "binding"
-        fun toBind (plant : Plant) = with(binding) {
-            plantImage.setImageResource(plant.imageID)
-            tvTitle.text = plant.name
+
+        fun toBind (plant : Plant) {
+            binding.plantImage.setImageResource(plant.imageID)
+            binding.tvTitle.text = plant.name
         }
     }
 
-    //Берет разметку, надувает с помощью inflate и создает экземпляр класса PlantHolder
+    //Функция надувает разметку с помощью inflate и создает экземпляр класса PlantHolder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlantHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.plant_item, parent, false)
         return PlantHolder(view)

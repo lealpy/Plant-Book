@@ -3,13 +3,16 @@
     <string name="app_name">Хищные растения</string>
 
     <string name="plant">Растение</string>
+    <string name="plant_description">Описание растения</string>
+    <string name="add_plant">Добавить растение</string>
+    <string name="add_random_plant">Добавить случайное растение</string>
 
     <string name="open">Open</string>
     <string name="close">Close</string>
 
     <string name="book">Справочник</string>
 
-    <string name="main_activity_tittle">Список растений</string>
+    <string name="my_plants">Мои растения</string>
 
     <string name="zhirianka">Жирянка</string>
     <string name="muholovka">Венерина мухоловка</string>
