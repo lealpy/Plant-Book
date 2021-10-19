@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -22,6 +23,9 @@ class GardenFragment : Fragment() {
     private val dataModel : DataModel by activityViewModels()
     private val plantAdapter = PlantAdapter()
 
+    val SPAN_COUNT_PORTRAIT = 3 // Переместить в компаньон?
+    val SPAN_COUNT_LANDSCAPE = 5 // Переместить в компаньон?
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -40,7 +44,8 @@ class GardenFragment : Fragment() {
     }
 
     private fun initRecyclerView() {
-        binding.recyclerView.layoutManager = GridLayoutManager(activity,3) // 3 - кол-во элементов в строке
+
+        binding.recyclerView.layoutManager = GridLayoutManager(activity, spanCount()) // spanCount - кол-во элементов в строке
         binding.recyclerView.adapter = plantAdapter
 
         //Восстанавливаем ранее добавленные растения
@@ -48,26 +53,28 @@ class GardenFragment : Fragment() {
         dataModel.plantListLiveData.observe(activity as LifecycleOwner, { plantListRestore = it })
         plantAdapter.addSomePlants(plantListRestore)
 
+        // Подписываемся на актуальный список растений
+        dataModel.plantListLiveData.value = plantAdapter.plantListForRecyclerView
+
         //Добавляем случайное растение
         binding.buttonAddRandomPlant.setOnClickListener {
             plantAdapter.addRandomPlant()
             binding.recyclerView.smoothScrollToPosition(plantAdapter.getItemCount()-1) // Автоматическая прокрутка вниз
-            dataModel.plantListLiveData.value = plantAdapter.plantListForRecyclerView // Сохраняем список отрисованных элементов в LiveData
         }
 
         //Удаляем растение по свайпу
-            ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
-                0,
-                ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
-                ) {
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
+            0,
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+            ) {
 
-                    override fun onMove(
-                        recyclerView: RecyclerView,
-                        viewHolder: RecyclerView.ViewHolder,
-                        target: RecyclerView.ViewHolder
-                    ): Boolean {
-                        return false
-                    }
+                override fun onMove(
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    target: RecyclerView.ViewHolder
+                ): Boolean {
+                    return false
+                }
 
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
 
@@ -75,38 +82,24 @@ class GardenFragment : Fragment() {
                     val deletedPlant = plantAdapter.plantListForRecyclerView[deletedPlantPosition]
                     plantAdapter.deletePlant(deletedPlantPosition)
 
-                    //Восстанавливаем удаленное растение
+                    //Восстанавливаем ошибочно удаленное растение
                     Snackbar.make(requireView(), "Растение удалено", Snackbar.LENGTH_SHORT)
                         .setAction("Вернуть") {
                             plantAdapter.returnDeletedPlant(deletedPlantPosition, deletedPlant)
+                            binding.recyclerView.smoothScrollToPosition(deletedPlantPosition) // Автоматическая прокрутка на восстановленную позицию
                         }.show()
-
                 }
 
-                }
-            ).attachToRecyclerView(binding.recyclerView)
+            }
+        ).attachToRecyclerView(binding.recyclerView)
     }
-}
 
-
-
-
-
-
-
-/*
-override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-
-val plantListBeforeDelete = plantAdapter.plantListForRecyclerView // - восстановление не работает
-//var plantListBeforeDelete = dataModel.plantListLiveData.value ?: mutableListOf<Plant>() // - не работает
-//var plantListBeforeDelete = mutableListOf(zhirianka, sarracenia) // - а если создать новый список - работает
-
-plantAdapter.deletePlant(viewHolder.adapterPosition)
-
-Snackbar.make(requireView(), "Task deleted", Snackbar.LENGTH_SHORT)
-    .setAction("Вернуть растение") {
-         plantAdapter.returnDeletedPlant_v2(plantListBeforeDelete)
-    }.show()
+    private fun spanCount() : Int {
+        return when (getResources().getConfiguration().orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> SPAN_COUNT_LANDSCAPE
+            Configuration.ORIENTATION_PORTRAIT -> SPAN_COUNT_PORTRAIT
+            else -> 1
+        }
+    }
 
 }
-*/

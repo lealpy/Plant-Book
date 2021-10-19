@@ -5,11 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LifecycleOwner
 import com.example.plantsbook.classes.Plant
 import com.example.plantsbook.databinding.FragmentPlantInfoBinding
+import com.google.android.material.snackbar.Snackbar
 
 class PlantInfoFragment : Fragment() {
 
@@ -26,15 +26,24 @@ class PlantInfoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         dataModel.plantLiveData.observe(activity as LifecycleOwner, { _plant ->
-                 binding.tittlePlantInfo.text = _plant.name
-                 binding.imagePlantInfo.setImageResource(_plant.imageID)
-                 binding.descriptionPlantInfo.text = _plant.description
-                 binding.buttonAddPlant.setOnClickListener {
-                     var plantListForAddButton = dataModel.plantListLiveData.value ?: mutableListOf<Plant>()
-                     plantListForAddButton.add(_plant)
-                     dataModel.plantListLiveData.value = plantListForAddButton // Сохраняем список добавленных элементов в LiveData
-                     Toast.makeText(getActivity(), "Добавлено растение ${_plant.name}", Toast.LENGTH_SHORT).show()
-                 }
+             binding.tittlePlantInfo.text = _plant.name
+             binding.imagePlantInfo.setImageResource(_plant.imageID)
+             binding.descriptionPlantInfo.text = _plant.description
+
+            // Добавляем растение
+             binding.buttonAddPlant.setOnClickListener {
+                 var plantListForAddButton = dataModel.plantListLiveData.value ?: mutableListOf<Plant>()
+                 dataModel.plantListLiveData.value = plantListForAddButton // Подписываемся на изменения в списке растений (LiveData)
+
+                 plantListForAddButton.add(_plant)
+
+                 //Убираем ошибочно добавленное растение
+                 Snackbar.make(requireView(), "Добавлено растение", Snackbar.LENGTH_SHORT)
+                     .setAction("Отменить") {
+                         plantListForAddButton.removeLast()
+                     }.show()
+
+             }
         })
     }
 

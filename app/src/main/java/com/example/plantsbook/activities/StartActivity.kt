@@ -1,6 +1,7 @@
 package com.example.plantsbook.activities
 
 import android.content.Intent
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
@@ -14,6 +15,7 @@ import com.example.myapplication.DataModel
 import com.example.myapplication.GardenFragment
 import com.example.myapplication.PlantInfoFragment
 import com.example.plantsbook.*
+import com.example.plantsbook.classes.PlantAdapter
 import com.example.plantsbook.databinding.ActivityStartBinding
 import com.google.android.material.navigation.NavigationView
 
@@ -21,7 +23,6 @@ class StartActivity : AppCompatActivity() {
     lateinit var binding: ActivityStartBinding
     lateinit var toggle: ActionBarDrawerToggle
     private val dataModel : DataModel by viewModels() // 'androidx.fragment:fragment-ktx:1.3.6'
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
 

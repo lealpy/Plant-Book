@@ -20,8 +20,8 @@ class PlantAdapter : RecyclerView.Adapter<PlantAdapter.PlantHolder>() {
         val binding = PlantItemBinding.bind(item)
 
         fun toBind (plant : Plant) {
-            binding.plantImage.setImageResource(plant.imageID)
-            binding.tvTitle.text = plant.name
+            binding.plantItemImage.setImageResource(plant.imageID)
+            binding.plantItemTitle.text = plant.name
         }
     }
 
@@ -65,7 +65,5 @@ class PlantAdapter : RecyclerView.Adapter<PlantAdapter.PlantHolder>() {
         plantListForRecyclerView = _plantList
         notifyDataSetChanged() // Обновляем recycler
     }
-
-
 
 }

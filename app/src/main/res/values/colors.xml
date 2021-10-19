@@ -9,8 +9,8 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="dark_red">#681C1C</color>
     <color name="background_color">#FFFFFFFF</color>
-    <color name="menu_color">#60985151</color>
+    <color name="dark_red">#681C1C</color>
+    <color name="menu_color">#681C1C</color>
 
 </resources>
