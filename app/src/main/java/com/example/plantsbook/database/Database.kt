@@ -33,4 +33,7 @@ val sarracenia = Plant(sarraceniaName, R.drawable.sarracenia4, sarraceniaDescrip
 val puzirchatka = Plant(puzirchatkaName, R.drawable.puzirchatka5, puzirchatkaDescription)
 val darlingtonia = Plant(darlingtoniaName, R.drawable.darlingtonia6, darlingtoniaDescription)
 
-val plantList = listOf (zhirianka, muholovka, nepentes, rosianka, sarracenia, puzirchatka, darlingtonia)
+val plantListDB = listOf (zhirianka, muholovka, nepentes, rosianka, sarracenia, puzirchatka, darlingtonia)
+
+val plantTest = Plant ("Тест", R.drawable.plant_image)
+

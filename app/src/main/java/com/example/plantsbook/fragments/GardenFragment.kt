@@ -5,13 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.example.plantsbook.*
 import com.example.plantsbook.classes.Plant
 import com.example.plantsbook.classes.PlantAdapter
 import com.example.plantsbook.databinding.FragmentGardenBinding
@@ -45,19 +43,48 @@ class GardenFragment : Fragment() {
         binding.recyclerView.layoutManager = GridLayoutManager(activity,3) // 3 - кол-во элементов в строке
         binding.recyclerView.adapter = plantAdapter
 
-        //Восстанавливаем ранее добавленные растения в RecyclerView
-        var plantLiveDataList = listOf<Plant>()
-        dataModel.plantListLiveData.observe(activity as LifecycleOwner, { plantLiveDataList = it })
-        plantAdapter.addSomePlants(plantLiveDataList)
+        //Восстанавливаем ранее добавленные растения
+        var plantListRestore = listOf<Plant>()
+        dataModel.plantListLiveData.observe(activity as LifecycleOwner, { plantListRestore = it })
+        plantAdapter.addSomePlants(plantListRestore)
 
-        //Добавляем новое растение
+        //Добавляем случайное растение
         binding.buttonAddRandomPlant.setOnClickListener {
-            var plantListRandomIndex = (0..plantList.lastIndex).random()
-            val plant = Plant(plantList[plantListRandomIndex].name, plantList[plantListRandomIndex].imageID)
-            plantAdapter.addPlant(plant)
+            plantAdapter.addRandomPlant()
             binding.recyclerView.smoothScrollToPosition(plantAdapter.getItemCount()-1) // Автоматическая прокрутка вниз
             dataModel.plantListLiveData.value = plantAdapter.plantListForRecyclerView // Сохраняем список отрисованных элементов в LiveData
         }
+
+        //Удаляем растение по свайпу
+            ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
+                0,
+                ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+                ) {
+
+                    override fun onMove(
+                        recyclerView: RecyclerView,
+                        viewHolder: RecyclerView.ViewHolder,
+                        target: RecyclerView.ViewHolder
+                    ): Boolean {
+                        return false
+                    }
+
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+
+                    val deletedPlantPosition = viewHolder.adapterPosition
+                    val deletedPlant = plantAdapter.plantListForRecyclerView[deletedPlantPosition]
+                    plantAdapter.deletePlant(deletedPlantPosition)
+
+                    //Восстанавливаем удаленное растение
+                    Snackbar.make(requireView(), "Растение удалено", Snackbar.LENGTH_SHORT)
+                        .setAction("Вернуть") {
+                            plantAdapter.returnDeletedPlant(deletedPlantPosition, deletedPlant)
+                        }.show()
+
+                }
+
+                }
+            ).attachToRecyclerView(binding.recyclerView)
     }
 }
 
@@ -67,3 +94,19 @@ class GardenFragment : Fragment() {
 
 
 
+/*
+override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+
+val plantListBeforeDelete = plantAdapter.plantListForRecyclerView // - восстановление не работает
+//var plantListBeforeDelete = dataModel.plantListLiveData.value ?: mutableListOf<Plant>() // - не работает
+//var plantListBeforeDelete = mutableListOf(zhirianka, sarracenia) // - а если создать новый список - работает
+
+plantAdapter.deletePlant(viewHolder.adapterPosition)
+
+Snackbar.make(requireView(), "Task deleted", Snackbar.LENGTH_SHORT)
+    .setAction("Вернуть растение") {
+         plantAdapter.returnDeletedPlant_v2(plantListBeforeDelete)
+    }.show()
+
+}
+*/

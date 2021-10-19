@@ -3,13 +3,18 @@ package com.example.plantsbook.classes
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.viewModels
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
+import com.example.myapplication.DataModel
 import com.example.plantsbook.R
 import com.example.plantsbook.databinding.PlantItemBinding
+import com.example.plantsbook.plantListDB
 
 class PlantAdapter : RecyclerView.Adapter<PlantAdapter.PlantHolder>() {
 
-    val plantListForRecyclerView = mutableListOf<Plant> ()
+    var plantListForRecyclerView = mutableListOf<Plant> ()
 
     class PlantHolder(item : View) : RecyclerView.ViewHolder(item) {
         val binding = PlantItemBinding.bind(item)
@@ -34,7 +39,9 @@ class PlantAdapter : RecyclerView.Adapter<PlantAdapter.PlantHolder>() {
         return plantListForRecyclerView.size
     }
 
-    fun addPlant(plant : Plant) {
+    fun addRandomPlant() {
+        var plantListRandomIndex = (0..plantListDB.lastIndex).random()
+        val plant = Plant(plantListDB[plantListRandomIndex].name, plantListDB[plantListRandomIndex].imageID)
         plantListForRecyclerView.add(plant)
         notifyDataSetChanged() // Перерисовка при изменении данных
     }
@@ -48,5 +55,17 @@ class PlantAdapter : RecyclerView.Adapter<PlantAdapter.PlantHolder>() {
         plantListForRecyclerView.removeAt(index)
         notifyDataSetChanged() // Перерисовка при изменении данных
     }
+
+    fun returnDeletedPlant(_position: Int, _plant : Plant) {
+        plantListForRecyclerView.add(_position, _plant)
+        notifyDataSetChanged() // Обновляем recycler
+    }
+
+    fun returnDeletedPlant_v2(_plantList : MutableList<Plant>) {
+        plantListForRecyclerView = _plantList
+        notifyDataSetChanged() // Обновляем recycler
+    }
+
+
 
 }
