@@ -11,20 +11,17 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.example.plantsbook.activities.StartActivity
 import com.example.plantsbook.classes.Plant
 import com.example.plantsbook.classes.PlantAdapter
 import com.example.plantsbook.databinding.FragmentGardenBinding
 import com.google.android.material.snackbar.Snackbar
-
 
 class GardenFragment : Fragment() {
 
     lateinit var binding : FragmentGardenBinding
     private val dataModel : DataModel by activityViewModels()
     private val plantAdapter = PlantAdapter()
-
-    val SPAN_COUNT_PORTRAIT = 3 // Переместить в компаньон?
-    val SPAN_COUNT_LANDSCAPE = 5 // Переместить в компаньон?
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,21 +42,19 @@ class GardenFragment : Fragment() {
 
     private fun initRecyclerView() {
 
-        binding.recyclerView.layoutManager = GridLayoutManager(activity, spanCount()) // spanCount - кол-во элементов в строке
-        binding.recyclerView.adapter = plantAdapter
-
         //Восстанавливаем ранее добавленные растения
         var plantListRestore = listOf<Plant>()
         dataModel.plantListLiveData.observe(activity as LifecycleOwner, { plantListRestore = it })
         plantAdapter.addSomePlants(plantListRestore)
 
-        // Подписываемся на актуальный список растений
-        dataModel.plantListLiveData.value = plantAdapter.plantListForRecyclerView
+        binding.recyclerView.layoutManager = GridLayoutManager(activity, spanCount()) // spanCount - кол-во элементов в строке
+        binding.recyclerView.adapter = plantAdapter
 
         //Добавляем случайное растение
         binding.buttonAddRandomPlant.setOnClickListener {
             plantAdapter.addRandomPlant()
             binding.recyclerView.smoothScrollToPosition(plantAdapter.getItemCount()-1) // Автоматическая прокрутка вниз
+            dataModel.plantListLiveData.value = plantAdapter.plantListForRecyclerView // Подписываемся на актуальный список растений
         }
 
         //Удаляем растение по свайпу
@@ -88,16 +83,18 @@ class GardenFragment : Fragment() {
                             plantAdapter.returnDeletedPlant(deletedPlantPosition, deletedPlant)
                             binding.recyclerView.smoothScrollToPosition(deletedPlantPosition) // Автоматическая прокрутка на восстановленную позицию
                         }.show()
-                }
 
+                    dataModel.plantListLiveData.value = plantAdapter.plantListForRecyclerView // Подписываемся на актуальный список растений
+
+                }
             }
         ).attachToRecyclerView(binding.recyclerView)
     }
 
     private fun spanCount() : Int {
         return when (getResources().getConfiguration().orientation) {
-            Configuration.ORIENTATION_LANDSCAPE -> SPAN_COUNT_LANDSCAPE
-            Configuration.ORIENTATION_PORTRAIT -> SPAN_COUNT_PORTRAIT
+            Configuration.ORIENTATION_LANDSCAPE -> StartActivity.SPAN_COUNT_LANDSCAPE
+            Configuration.ORIENTATION_PORTRAIT -> StartActivity.SPAN_COUNT_PORTRAIT
             else -> 1
         }
     }

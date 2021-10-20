@@ -11,6 +11,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.LifecycleOwner
 import com.example.myapplication.DataModel
 import com.example.myapplication.GardenFragment
 import com.example.myapplication.PlantInfoFragment
@@ -20,6 +21,14 @@ import com.example.plantsbook.databinding.ActivityStartBinding
 import com.google.android.material.navigation.NavigationView
 
 class StartActivity : AppCompatActivity() {
+
+    companion object {
+        const val GARDEN_FRAGMENT_NAME = "GardenFragment"
+        const val PLANT_INFO_FRAGMENT_NAME = "PlantInfoFragment"
+        const val SPAN_COUNT_PORTRAIT = 3
+        const val SPAN_COUNT_LANDSCAPE = 5
+    }
+
     lateinit var binding: ActivityStartBinding
     lateinit var toggle: ActionBarDrawerToggle
     private val dataModel : DataModel by viewModels() // 'androidx.fragment:fragment-ktx:1.3.6'
@@ -45,8 +54,17 @@ class StartActivity : AppCompatActivity() {
             true
         }
 
-        //При запуске приложения открываем GardenFragment
-        supportFragmentManager.beginTransaction().replace(R.id.activity_frame_layout, GardenFragment.newInstance()).commit()
+        //При запуске приложения сразу открываем фрагмент
+        dataModel.fragmentNameLiveData.observe(this, {
+            when(it) {
+                GARDEN_FRAGMENT_NAME -> {
+                    supportFragmentManager.beginTransaction().replace(R.id.activity_frame_layout, GardenFragment.newInstance()).commit()
+                }
+                PLANT_INFO_FRAGMENT_NAME -> {
+                    supportFragmentManager.beginTransaction().replace(R.id.activity_frame_layout, PlantInfoFragment.newInstance()).commit()
+                }
+            }
+        })
 
     }
 
@@ -58,39 +76,38 @@ class StartActivity : AppCompatActivity() {
     }
 
     private fun onClickMenu(Id: Int) {
-        when (Id) {
+        when(Id) {
             R.id.nav_all_plants -> {
-                supportFragmentManager.beginTransaction().replace(R.id.activity_frame_layout, GardenFragment.newInstance()).commit()
+                dataModel.fragmentNameLiveData.value = GARDEN_FRAGMENT_NAME
             }
-            R.id.nav_zhirianka -> {
-                supportFragmentManager.beginTransaction().replace(R.id.activity_frame_layout, PlantInfoFragment.newInstance()).commit()
-                dataModel.plantLiveData.value = zhirianka
-            }
-            R.id.nav_muholovka -> {
-                supportFragmentManager.beginTransaction().replace(R.id.activity_frame_layout, PlantInfoFragment.newInstance()).commit()
-                dataModel.plantLiveData.value = muholovka
-            }
-            R.id.nav_nepentes -> {
-                supportFragmentManager.beginTransaction().replace(R.id.activity_frame_layout, PlantInfoFragment.newInstance()).commit()
-                dataModel.plantLiveData.value = nepentes
-            }
-            R.id.nav_rosianka -> {
-                supportFragmentManager.beginTransaction().replace(R.id.activity_frame_layout, PlantInfoFragment.newInstance()).commit()
-                dataModel.plantLiveData.value = rosianka
-            }
-            R.id.nav_sarracenia -> {
-                supportFragmentManager.beginTransaction().replace(R.id.activity_frame_layout, PlantInfoFragment.newInstance()).commit()
-                dataModel.plantLiveData.value = sarracenia
-            }
-            R.id.nav_puzirchatka -> {
-                supportFragmentManager.beginTransaction().replace(R.id.activity_frame_layout, PlantInfoFragment.newInstance()).commit()
-                dataModel.plantLiveData.value = puzirchatka
-            }
-            R.id.nav_darlingtonia -> {
-                supportFragmentManager.beginTransaction().replace(R.id.activity_frame_layout, PlantInfoFragment.newInstance()).commit()
-                dataModel.plantLiveData.value = darlingtonia
+            else -> {
+                dataModel.fragmentNameLiveData.value = PLANT_INFO_FRAGMENT_NAME
+                when (Id) {
+                    R.id.nav_zhirianka -> {
+                        dataModel.plantLiveData.value = zhirianka
+                    }
+                    R.id.nav_muholovka -> {
+                        dataModel.plantLiveData.value = muholovka
+                    }
+                    R.id.nav_nepentes -> {
+                        dataModel.plantLiveData.value = nepentes
+                    }
+                    R.id.nav_rosianka -> {
+                        dataModel.plantLiveData.value = rosianka
+                    }
+                    R.id.nav_sarracenia -> {
+                        dataModel.plantLiveData.value = sarracenia
+                    }
+                    R.id.nav_puzirchatka -> {
+                        dataModel.plantLiveData.value = puzirchatka
+                    }
+                    R.id.nav_darlingtonia -> {
+                        dataModel.plantLiveData.value = darlingtonia
+                    }
+                }
             }
         }
+
     }
 
 }
