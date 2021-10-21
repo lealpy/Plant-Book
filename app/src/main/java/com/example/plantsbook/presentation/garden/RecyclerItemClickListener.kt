@@ -1,4 +1,4 @@
-package com.example.plantsbook.classes
+package com.example.plantsbook.presentation.garden
 
 import android.view.GestureDetector
 import android.view.MotionEvent
