@@ -99,9 +99,7 @@ class GardenFragment : Fragment() {
             nextDay(plantAdapter.plantListForRecyclerView)
         }
 
-        binding.tittleGarden.setOnClickListener {
-            Toast.makeText(activity, "clicked", Toast.LENGTH_LONG).show() }
-       }
+    }
 
     private fun spanCount() : Int {
         return when (getResources().getConfiguration().orientation) {
