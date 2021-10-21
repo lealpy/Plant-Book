@@ -1,11 +1,11 @@
 package com.example.plantsbook.data.models
 
 enum class PlantType {
-    zhirianka,
-    muholovka,
-    nepentes,
-    rosianka,
-    sarracenia,
-    puzirchatka,
-    darlingtonia
+    ZHIRIANKA,
+    MUHOLOVKA,
+    NEPENTES,
+    ROSIANKA,
+    SARRACENIA,
+    PUZIRCHATKA,
+    DARLINGTONIA
 }

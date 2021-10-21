@@ -2,6 +2,7 @@ package com.example.plantsbook.presentation.garden
 
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.plantsbook.R
@@ -19,9 +20,22 @@ class PlantAdapter : RecyclerView.Adapter<PlantAdapter.PlantHolder>() {
         fun toBind(plant: Plant) {
             binding.plantItemImage.setImageResource(formatTypeToImgResId(plant.type))
             binding.plantItemTitle.text = plant.name
-            if (plant.state.isTriggered()) {
-                binding.indicatorItemImage.setImageResource(R.drawable.ic_baseline_fiber_manual_record_24)
+
+            binding.imgIsNotWatered.setImageResource(R.drawable.img_is_not_watered)
+            if (!plant.state.isNotWatered) {
+                binding.imgIsNotWatered.visibility = View.INVISIBLE
             }
+
+            binding.imgLeavesFallen.setImageResource(R.drawable.img_leaves_fallen)
+            if (!plant.state.isLeavesFallen) {
+                binding.imgLeavesFallen.visibility = View.INVISIBLE
+            }
+
+            binding.imgInsectsAttacked.setImageResource(R.drawable.img_insects_attacked)
+            if (!plant.state.isInsectsAttacked) {
+                binding.imgInsectsAttacked.visibility = View.INVISIBLE
+            }
+
         }
     }
 

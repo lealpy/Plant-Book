@@ -9,7 +9,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.plantsbook.R
 import com.example.plantsbook.data.models.PlantType
-import com.example.plantsbook.databinding.ActivityStartBinding
+import com.example.plantsbook.databinding.ActivityMainBinding
 import com.example.plantsbook.presentation.garden.GardenFragment
 import com.example.plantsbook.presentation.plant_info.PlantInfoFragment
 import com.google.android.material.navigation.NavigationView
@@ -18,14 +18,14 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivityStartBinding
+    lateinit var binding: ActivityMainBinding
     lateinit var toggle: ActionBarDrawerToggle
     private val mainViewModel: MainViewModel by viewModels() // 'androidx.fragment:fragment-ktx:1.3.6'
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-        binding = ActivityStartBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
                     supportFragmentManager.beginTransaction()
                         .replace(
                             R.id.activity_frame_layout,
-                            PlantInfoFragment.newInstance(navView.plantType ?: PlantType.zhirianka)
+                            PlantInfoFragment.newInstance(navView.plantType ?: PlantType.ZHIRIANKA)
                         )
                         .commit()
                 }
@@ -76,25 +76,25 @@ class MainActivity : AppCompatActivity() {
                 mainViewModel.onNavDrawerClicked()
             }
             R.id.nav_zhirianka -> {
-                mainViewModel.onNavDrawerClicked(PlantType.zhirianka)
+                mainViewModel.onNavDrawerClicked(PlantType.ZHIRIANKA)
             }
             R.id.nav_muholovka -> {
-                mainViewModel.onNavDrawerClicked(PlantType.muholovka)
+                mainViewModel.onNavDrawerClicked(PlantType.MUHOLOVKA)
             }
             R.id.nav_nepentes -> {
-                mainViewModel.onNavDrawerClicked(PlantType.nepentes)
+                mainViewModel.onNavDrawerClicked(PlantType.NEPENTES)
             }
             R.id.nav_rosianka -> {
-                mainViewModel.onNavDrawerClicked(PlantType.rosianka)
+                mainViewModel.onNavDrawerClicked(PlantType.ROSIANKA)
             }
             R.id.nav_sarracenia -> {
-                mainViewModel.onNavDrawerClicked(PlantType.sarracenia)
+                mainViewModel.onNavDrawerClicked(PlantType.SARRACENIA)
             }
             R.id.nav_puzirchatka -> {
-                mainViewModel.onNavDrawerClicked(PlantType.puzirchatka)
+                mainViewModel.onNavDrawerClicked(PlantType.PUZIRCHATKA)
             }
             R.id.nav_darlingtonia -> {
-                mainViewModel.onNavDrawerClicked(PlantType.darlingtonia)
+                mainViewModel.onNavDrawerClicked(PlantType.DARLINGTONIA)
             }
         }
     }

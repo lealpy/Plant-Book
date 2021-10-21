@@ -30,45 +30,45 @@ class PlantsRepository @Inject constructor(
 
     fun getPlantByType(type: PlantType): Plant {
         return when (type) {
-            PlantType.zhirianka -> Plant(
+            PlantType.ZHIRIANKA -> Plant(
                 name = resourceManager.getString(R.string.zhirianka),
-                type = PlantType.zhirianka,
+                type = PlantType.ZHIRIANKA,
                 description = resourceManager.getString(R.string.zhirianka_description),
                 state = PlantState.getIdle()
             )
-            PlantType.muholovka -> Plant(
+            PlantType.MUHOLOVKA -> Plant(
                 name = resourceManager.getString(R.string.muholovka),
-                type = PlantType.muholovka,
+                type = PlantType.MUHOLOVKA,
                 description = resourceManager.getString(R.string.zhirianka_description),
                 state = PlantState.getIdle()
             )
-            PlantType.nepentes -> Plant(
+            PlantType.NEPENTES -> Plant(
                 name = resourceManager.getString(R.string.nepentes),
-                type = PlantType.nepentes,
+                type = PlantType.NEPENTES,
                 description = resourceManager.getString(R.string.zhirianka_description),
                 state = PlantState.getIdle()
             )
-            PlantType.rosianka -> Plant(
+            PlantType.ROSIANKA -> Plant(
                 name = resourceManager.getString(R.string.rosianka),
-                type = PlantType.rosianka,
+                type = PlantType.ROSIANKA,
                 description = resourceManager.getString(R.string.zhirianka_description),
                 state = PlantState.getIdle()
             )
-            PlantType.sarracenia -> Plant(
+            PlantType.SARRACENIA -> Plant(
                 name = resourceManager.getString(R.string.sarracenia),
-                type = PlantType.sarracenia,
+                type = PlantType.SARRACENIA,
                 description = resourceManager.getString(R.string.zhirianka_description),
                 state = PlantState.getIdle()
             )
-            PlantType.puzirchatka -> Plant(
+            PlantType.PUZIRCHATKA -> Plant(
                 name = resourceManager.getString(R.string.puzirchatka),
-                type = PlantType.puzirchatka,
+                type = PlantType.PUZIRCHATKA,
                 description = resourceManager.getString(R.string.zhirianka_description),
                 state = PlantState.getIdle()
             )
-            PlantType.darlingtonia -> Plant(
+            PlantType.DARLINGTONIA -> Plant(
                 name = resourceManager.getString(R.string.darlingtonia),
-                type = PlantType.darlingtonia,
+                type = PlantType.DARLINGTONIA,
                 description = resourceManager.getString(R.string.zhirianka_description),
                 state = PlantState.getIdle()
             )
