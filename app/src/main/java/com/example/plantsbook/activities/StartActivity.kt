@@ -25,8 +25,13 @@ class StartActivity : AppCompatActivity() {
     companion object {
         const val GARDEN_FRAGMENT_NAME = "GardenFragment"
         const val PLANT_INFO_FRAGMENT_NAME = "PlantInfoFragment"
+
         const val SPAN_COUNT_PORTRAIT = 3
         const val SPAN_COUNT_LANDSCAPE = 5
+
+        const val PROBABILITY_IS_NOT_WATERED = 0.2
+        const val PROBABILITY_IS_LEAVES_FALLEN = 0.05
+        const val PROBABILITY_IS_INSECTS_ATTACKED = 0.05
     }
 
     lateinit var binding: ActivityStartBinding
@@ -54,7 +59,7 @@ class StartActivity : AppCompatActivity() {
             true
         }
 
-        //При запуске приложения сразу открываем фрагмент
+        //При запуске приложения сразу открываем фрагмент (по умолчанию в LiveData стоит GARDEN_FRAGMENT_NAME
         dataModel.fragmentNameLiveData.observe(this, {
             when(it) {
                 GARDEN_FRAGMENT_NAME -> {

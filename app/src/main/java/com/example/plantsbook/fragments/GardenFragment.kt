@@ -6,14 +6,20 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.example.plantsbook.activities.StartActivity
+import com.example.plantsbook.activities.StartActivity.Companion.PROBABILITY_IS_INSECTS_ATTACKED
+import com.example.plantsbook.activities.StartActivity.Companion.PROBABILITY_IS_LEAVES_FALLEN
+import com.example.plantsbook.activities.StartActivity.Companion.PROBABILITY_IS_NOT_WATERED
+import com.example.plantsbook.activities.StartActivity.Companion.SPAN_COUNT_LANDSCAPE
+import com.example.plantsbook.activities.StartActivity.Companion.SPAN_COUNT_PORTRAIT
 import com.example.plantsbook.classes.Plant
 import com.example.plantsbook.classes.PlantAdapter
+import com.example.plantsbook.classes.RecyclerItemClickListener
 import com.example.plantsbook.databinding.FragmentGardenBinding
 import com.google.android.material.snackbar.Snackbar
 
@@ -47,8 +53,7 @@ class GardenFragment : Fragment() {
         dataModel.plantListLiveData.observe(activity as LifecycleOwner, { plantListRestore = it })
         plantAdapter.addSomePlants(plantListRestore)
 
-        binding.recyclerView.layoutManager = GridLayoutManager(activity, spanCount()) // spanCount - кол-во элементов в строке
-        binding.recyclerView.adapter = plantAdapter
+        bindRecyclerView()
 
         //Добавляем случайное растение
         binding.buttonAddRandomPlant.setOnClickListener {
@@ -89,14 +94,82 @@ class GardenFragment : Fragment() {
                 }
             }
         ).attachToRecyclerView(binding.recyclerView)
-    }
+
+        binding.buttonNextDay.setOnClickListener {
+            nextDay(plantAdapter.plantListForRecyclerView)
+        }
+
+        binding.tittleGarden.setOnClickListener {
+            Toast.makeText(activity, "clicked", Toast.LENGTH_LONG).show() }
+       }
 
     private fun spanCount() : Int {
         return when (getResources().getConfiguration().orientation) {
-            Configuration.ORIENTATION_LANDSCAPE -> StartActivity.SPAN_COUNT_LANDSCAPE
-            Configuration.ORIENTATION_PORTRAIT -> StartActivity.SPAN_COUNT_PORTRAIT
+            Configuration.ORIENTATION_LANDSCAPE -> SPAN_COUNT_LANDSCAPE
+            Configuration.ORIENTATION_PORTRAIT -> SPAN_COUNT_PORTRAIT
             else -> 1
         }
     }
 
+    private fun bindRecyclerView() {
+        binding.recyclerView.layoutManager = GridLayoutManager(activity, spanCount()) // spanCount - кол-во элементов в строке
+        binding.recyclerView.adapter = plantAdapter
+    }
+
+    private fun nextDay(_plantList : MutableList<Plant>) {
+
+        _plantList.removeAll{ it.isTriggered() }
+
+        bindRecyclerView()
+
+        _plantList.forEach {
+            it.isNotWatered = (Math.random() < PROBABILITY_IS_NOT_WATERED)
+            it.isLeavesFallen = (Math.random() < PROBABILITY_IS_LEAVES_FALLEN)
+            it.isInsectsAttacked = (Math.random() < PROBABILITY_IS_INSECTS_ATTACKED)
+        }
+
+    }
+
+    inline fun RecyclerView.setOnItemClickListener(crossinline listener: (position: Int) -> Unit) {
+        addOnItemTouchListener(RecyclerItemClickListener(this,
+            object : RecyclerItemClickListener.OnItemClickListener {
+                override fun onItemClick(view: View, position: Int) {
+                    listener(position)
+                }
+            }))
+    }
+
 }
+
+/*
+    inline fun RecyclerView.setOnItemClickListener(crossinline listener: (position: Int) -> Unit) {
+        addOnItemTouchListener(RecyclerItemClickListener(this,
+            object : RecyclerItemClickListener.OnItemClickListener {
+                override fun onItemClick(view: View, position: Int) {
+                    listener(position)
+                }
+            }))
+    }
+
+
+        var index = 0
+        for(el in _plantList) {
+            if (el.isTriggered() && plantAdapter.plantListForRecyclerView[index] != null) {
+                plantAdapter.deletePlant(index)
+            }
+            else index ++
+        }
+
+for((elIndex, el) in _plantList.withIndex()) {
+    if (el.isTriggered()) {
+        plantAdapter.deletePlant(elIndex)
+    }
+}
+
+
+        for(i in 0.._plantList.lastIndex) {
+            if (_plantList[i].isTriggered()) {
+                plantAdapter.deletePlant(i)
+            }
+        }
+ */

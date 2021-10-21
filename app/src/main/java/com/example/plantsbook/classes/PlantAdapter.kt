@@ -22,6 +22,9 @@ class PlantAdapter : RecyclerView.Adapter<PlantAdapter.PlantHolder>() {
         fun toBind (plant : Plant) {
             binding.plantItemImage.setImageResource(plant.imageID)
             binding.plantItemTitle.text = plant.name
+            if (plant.isTriggered()) {
+                binding.indicatorItemImage.setImageResource(R.drawable.ic_baseline_fiber_manual_record_24)
+            }
         }
     }
 
