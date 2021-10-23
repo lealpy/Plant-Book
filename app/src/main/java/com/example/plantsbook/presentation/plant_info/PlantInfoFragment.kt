@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import com.example.plantsbook.data.models.PlantType
 import com.example.plantsbook.databinding.FragmentPlantInfoBinding
 import com.example.plantsbook.utils.formatTypeToImgResId
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -30,8 +31,7 @@ class PlantInfoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         arguments?.getInt(PLANT_TYPE_ORDINAL)?.let { typeOrdinal ->
             viewModel.fetchPlantInfo(typeOrdinal)
-        } ?: Toast.makeText(context, "Сорян, но что-то пошло не так", Toast.LENGTH_SHORT).show()
-
+        } ?: Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
 
         viewModel.plantInfo.observe(viewLifecycleOwner, { plant ->
             binding.tittlePlantInfo.text = plant.name
@@ -39,9 +39,15 @@ class PlantInfoFragment : Fragment() {
             binding.descriptionPlantInfo.text = plant.description
         })
 
-        // Добавляем растение
         binding.buttonAddPlant.setOnClickListener {
+            // Добавляем растение
             viewModel.addPlant()
+
+            //Убираем ошибочно добавленное растение
+            Snackbar.make(requireView(), "Добавлено растение", Snackbar.LENGTH_SHORT)
+                .setAction("Отменить") {
+                    viewModel.removeLastPlant()
+                }.show()
         }
     }
 

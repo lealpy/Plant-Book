@@ -14,6 +14,8 @@ class PlantInfoViewModel @Inject constructor(
     private val plantsRepository: PlantsRepository
 ) : ViewModel() {
 
+    private val plantList = plantsRepository.plantList
+
     private val _plantInfo = MutableLiveData<Plant>(null)
     val plantInfo: LiveData<Plant> = _plantInfo
 
@@ -27,6 +29,12 @@ class PlantInfoViewModel @Inject constructor(
         _plantInfo.value?.let { plant ->
             plantsRepository.addPlant(plant)
         }
+    }
+
+    fun removeLastPlant () {
+        val __plantList = plantList.value ?: mutableListOf<Plant>()
+        __plantList?.removeLast()
+        plantsRepository.setPlantList(__plantList)
     }
 
 }

@@ -8,7 +8,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
+import com.example.plantsbook.data.models.Plant
 import com.example.plantsbook.databinding.FragmentGardenBinding
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -18,7 +22,7 @@ class GardenFragment : Fragment() {
 
     private val viewModel: GardenViewModel by viewModels()
 
-    private val plantAdapter = PlantAdapter()
+    val plantAdapter = PlantAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,9 +33,9 @@ class GardenFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        initObservers()
         initRecyclerView()
         initViews()
-        initObservers()
     }
 
     private fun initRecyclerView() {
@@ -39,56 +43,64 @@ class GardenFragment : Fragment() {
         binding.recyclerView.layoutManager = GridLayoutManager(context, getSpanCount())
         binding.recyclerView.adapter = plantAdapter
 
-//        //Удаляем растение по свайпу
-//        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
-//            0,
-//            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
-//        ) {
-//
-//            override fun onMove(
-//                recyclerView: RecyclerView,
-//                viewHolder: RecyclerView.ViewHolder,
-//                target: RecyclerView.ViewHolder
-//            ): Boolean {
-//                return false
-//            }
-//
-//            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-//
-//                val deletedPlantPosition = viewHolder.adapterPosition
-//                val deletedPlant = plantAdapter.plantList[deletedPlantPosition]
-//                plantAdapter.deletePlant(deletedPlantPosition)
-//
-//                //Восстанавливаем ошибочно удаленное растение
-//                Snackbar.make(requireView(), "Растение удалено", Snackbar.LENGTH_SHORT)
-//                    .setAction("Вернуть") {
-//                        plantAdapter.returnDeletedPlant(deletedPlantPosition, deletedPlant)
-//                        binding.recyclerView.smoothScrollToPosition(deletedPlantPosition) // Автоматическая прокрутка на восстановленную позицию
-//                    }.show()
-//
-//                mainViewModel.plantListLiveData.value =
-//                    plantAdapter.plantList // Подписываемся на актуальный список растений
-//
-//            }
-//        }
-//        ).attachToRecyclerView(binding.recyclerView)
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
+            0,
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+        ) {
+
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+
+                val removedPlantPosition = viewHolder.adapterPosition
+                //Удаляем растение по свайпу
+                viewModel.removePlant(removedPlantPosition)
+
+                //Восстанавливаем ошибочно удаленное растение
+                Snackbar.make(requireView(), "Растение удалено", Snackbar.LENGTH_SHORT)
+                    .setAction("Вернуть") {
+                        viewModel.returnRemovedPlant(removedPlantPosition)
+                        // Автоматическая прокрутка на восстановленную позицию
+                        binding.recyclerView.smoothScrollToPosition(removedPlantPosition)
+                    }.show()
+            }
+        }
+        ).attachToRecyclerView(binding.recyclerView)
+
+    }
+
+    private fun initObservers() {
+        viewModel.plantList.observe(viewLifecycleOwner) { __plantList ->
+            plantAdapter.setData(__plantList)
+        }
     }
 
     private fun initViews() {
         //Добавляем случайное растение
         binding.buttonAddRandomPlant.setOnClickListener {
             viewModel.addRandomPlant()
+            binding.recyclerView.adapter = plantAdapter // Перестраиваем recycler для обновления индикаторов
         }
 
         binding.buttonNextDay.setOnClickListener {
-            viewModel.nextDay()
+            nextDay()
+            binding.recyclerView.adapter = plantAdapter // Перестраиваем recycler для обновления индикаторов
+        }
+
+        binding.buttonRefresh?.setOnClickListener {
+            binding.recyclerView.adapter = plantAdapter // Перестраиваем recycler для обновления индикаторов
         }
     }
 
-    private fun initObservers() {
-        viewModel.plantList.observe(viewLifecycleOwner) { plants ->
-            plantAdapter.setData(plants)
-        }
+    private fun nextDay() {
+        viewModel.nextDay()
+        binding.recyclerView.adapter = plantAdapter // Перестраиваем recycler для обновления индикаторов
     }
 
     private fun getSpanCount(): Int {

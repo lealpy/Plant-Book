@@ -12,7 +12,7 @@ import com.example.plantsbook.utils.formatTypeToImgResId
 
 class PlantAdapter : RecyclerView.Adapter<PlantAdapter.PlantHolder>() {
 
-    private var plants = listOf<Plant>()
+    private var plantList = listOf<Plant>()
 
     class PlantHolder(item: View) : RecyclerView.ViewHolder(item) {
         val binding = PlantItemBinding.bind(item)
@@ -39,22 +39,22 @@ class PlantAdapter : RecyclerView.Adapter<PlantAdapter.PlantHolder>() {
         }
     }
 
-    //Функция надувает разметку с помощью inflate и создает экземпляр класса PlantHolder
+    //Функция надувает разметку и создает экземпляр класса PlantHolder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlantHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.plant_item, parent, false)
         return PlantHolder(view)
     }
 
     override fun onBindViewHolder(holder: PlantHolder, position: Int) {
-        holder.toBind(plants[position])
+        holder.toBind(plantList[position])
     }
 
     override fun getItemCount(): Int {
-        return plants.size
+        return plantList.size
     }
 
-    fun setData(plants: List<Plant>) {
-        this.plants = plants
+    fun setData(__plantList: List<Plant>) {
+        this.plantList = __plantList
         notifyDataSetChanged()
     }
 
