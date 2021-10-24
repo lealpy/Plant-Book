@@ -1,50 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<menu
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-
     <item
         android:id="@+id/nav_all_plants"
-        android:title="@string/my_plants"
-        android:icon="@drawable/ic_baseline_home_24"/>
+        android:icon="@drawable/ic_baseline_home_24"
+        android:title="@string/my_plants" />
 
     <item
-        android:id="@+id/nav_zhirianka"
-        android:title="@string/zhirianka"
-        android:icon="@drawable/ic_baseline_fiber_manual_record_24"/>
-
-    <item
-        android:id="@+id/nav_muholovka"
-        android:title="@string/muholovka"
-        android:icon="@drawable/ic_baseline_fiber_manual_record_24"/>
-
-    <item
-        android:id="@+id/nav_nepentes"
-        android:title="@string/nepentes"
-        android:icon="@drawable/ic_baseline_fiber_manual_record_24"/>
-
-    <item
-        android:id="@+id/nav_rosianka"
-        android:title="@string/rosianka"
-        android:icon="@drawable/ic_baseline_fiber_manual_record_24"/>
-
-    <item
-        android:id="@+id/nav_sarracenia"
-        android:title="@string/sarracenia"
-        android:icon="@drawable/ic_baseline_fiber_manual_record_24"/>
-
-    <item
-        android:id="@+id/nav_puzirchatka"
-        android:title="@string/puzirchatka"
-        android:icon="@drawable/ic_baseline_fiber_manual_record_24"/>
-
-    <item
-        android:id="@+id/nav_darlingtonia"
-        android:title="@string/darlingtonia"
-        android:icon="@drawable/ic_baseline_fiber_manual_record_24"/>
+        android:id="@+id/nav_library"
+        android:icon="@drawable/ic_baseline_local_library_24"
+        android:title="@string/library" />
 
 </menu>
 

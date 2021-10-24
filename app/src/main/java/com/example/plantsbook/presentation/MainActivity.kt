@@ -8,10 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.plantsbook.R
-import com.example.plantsbook.data.models.PlantType
 import com.example.plantsbook.databinding.ActivityMainBinding
 import com.example.plantsbook.presentation.garden.GardenFragment
-import com.example.plantsbook.presentation.plant_info.PlantInfoFragment
+import com.example.plantsbook.presentation.library.LibraryFragment
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -44,18 +43,18 @@ class MainActivity : AppCompatActivity() {
         }
 
         //При запуске приложения сразу открываем фрагмент (по умолчанию в LiveData стоит GARDEN_FRAGMENT_NAME
-        mainViewModel.navigationPath.observe(this, { navView ->
-            when (navView) {
+        mainViewModel.navigationPath.observe(this, { navigationPath ->
+            when (navigationPath) {
                 is MainViewModel.NavPath.GardenNavPath -> {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.activity_frame_layout, GardenFragment.newInstance()).commit()
+                    supportFragmentManager
+                        .beginTransaction()
+                        .replace(R.id.activity_frame_layout, GardenFragment.newInstance())
+                        .commit()
                 }
-                is MainViewModel.NavPath.PlantInfoNavPath -> {
-                    supportFragmentManager.beginTransaction()
-                        .replace(
-                            R.id.activity_frame_layout,
-                            PlantInfoFragment.newInstance(navView.plantType ?: PlantType.ZHIRIANKA)
-                        )
+                is MainViewModel.NavPath.LibraryNavPath -> {
+                    supportFragmentManager
+                        .beginTransaction()
+                        .replace(R.id.activity_frame_layout, LibraryFragment.newInstance())
                         .commit()
                 }
             }
@@ -73,28 +72,10 @@ class MainActivity : AppCompatActivity() {
     private fun onClickMenu(id: Int) {
         when (id) {
             R.id.nav_all_plants -> {
-                mainViewModel.onNavDrawerClicked()
+                mainViewModel.onNavDrawerClicked(MainViewModel.NavPath.GardenNavPath)
             }
-            R.id.nav_zhirianka -> {
-                mainViewModel.onNavDrawerClicked(PlantType.ZHIRIANKA)
-            }
-            R.id.nav_muholovka -> {
-                mainViewModel.onNavDrawerClicked(PlantType.MUHOLOVKA)
-            }
-            R.id.nav_nepentes -> {
-                mainViewModel.onNavDrawerClicked(PlantType.NEPENTES)
-            }
-            R.id.nav_rosianka -> {
-                mainViewModel.onNavDrawerClicked(PlantType.ROSIANKA)
-            }
-            R.id.nav_sarracenia -> {
-                mainViewModel.onNavDrawerClicked(PlantType.SARRACENIA)
-            }
-            R.id.nav_puzirchatka -> {
-                mainViewModel.onNavDrawerClicked(PlantType.PUZIRCHATKA)
-            }
-            R.id.nav_darlingtonia -> {
-                mainViewModel.onNavDrawerClicked(PlantType.DARLINGTONIA)
+            R.id.nav_library -> {
+                mainViewModel.onNavDrawerClicked(MainViewModel.NavPath.LibraryNavPath)
             }
         }
     }

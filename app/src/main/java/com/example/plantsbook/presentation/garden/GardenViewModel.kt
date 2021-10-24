@@ -1,16 +1,15 @@
 package com.example.plantsbook.presentation.garden
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.RecyclerView
+import androidx.lifecycle.viewModelScope
 import com.example.plantsbook.data.models.Plant
 import com.example.plantsbook.data.models.PlantState
 import com.example.plantsbook.data.repository.PlantsRepository
-import com.example.plantsbook.databinding.FragmentGardenBinding
-import com.example.plantsbook.databinding.PlantItemBinding
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,45 +17,75 @@ class GardenViewModel @Inject constructor(
     private val plantsRepository: PlantsRepository
 ) : ViewModel() {
 
-    val plantList = plantsRepository.plantList
+    private var deletedPlant: Plant? = null
 
-    //////////////////////////////////////////////////////////////////////////////////////
-    private lateinit var deletedPlant : Plant
-    //////////////////////////////////////////////////////////////////////////////////////
+    fun getPlantsLd(): LiveData<List<Plant>> {
+        return plantsRepository.getPlantsLD()
+    }
 
-    fun addRandomPlant() {
-        val plant = plantsRepository.getRandomPlant()
-        plantsRepository.addPlant(plant)
+    fun insertRandomPlant() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                plantsRepository.insertRandomPlant()
+            }
+        }
+    }
+
+    fun deletePlant(plant: Plant) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                plantsRepository.deletePlant(plant)
+            }
+        }
     }
 
     fun nextDay() {
-        val listOfNonTriggeredPlants = plantList.value ?: mutableListOf<Plant>()
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                // Берем все растения из БД
+                val plants = plantsRepository.getPlants().toMutableList()
 
-        listOfNonTriggeredPlants.removeAll{plant ->
-            plant.state.isTriggered()
-        }
+                // Формируем список тех, которые померли и их нужно удалить
+                val plantsToRemove = plants.filter { plant ->
+                    plant.state.isTriggered()
+                }
+                plants.removeAll(plantsToRemove)
 
-        listOfNonTriggeredPlants.forEach { plant ->
-            plant.state = PlantState(
-                isNotWatered = (Math.random() < PROBABILITY_IS_NOT_WATERED),
-                isLeavesFallen = (Math.random() < PROBABILITY_IS_LEAVES_FALLEN),
-                isInsectsAttacked = (Math.random() < PROBABILITY_IS_INSECTS_ATTACKED)
-            )
+                // Формируем список тех, которые изменили свое состояние и их нужно обновить
+                val plantsToUpdate = mutableListOf<Plant>()
+                plants.forEach { plant ->
+                    val isNotWatered = Math.random() < PROBABILITY_IS_NOT_WATERED
+                    val isLeavesFallen = Math.random() < PROBABILITY_IS_LEAVES_FALLEN
+                    val isInsectsAttacked = Math.random() < PROBABILITY_IS_INSECTS_ATTACKED
+                    if (isNotWatered || isLeavesFallen || isInsectsAttacked) {
+                        plant.state = PlantState(
+                            isNotWatered = isNotWatered,
+                            isLeavesFallen = isLeavesFallen,
+                            isInsectsAttacked = isInsectsAttacked
+                        )
+                        plantsToUpdate.add(plant)
+                    }
+                }
+
+                // Удаляем из БД те, что надо было удалить
+                plantsToRemove.forEach { plant ->
+                    plantsRepository.deletePlant(plant)
+                }
+
+                // Обновляем в БД те, что надо было обновить (через интерт, т.к. OnConflictStrategy.REPLACE)
+                plantsToUpdate.forEach { plant ->
+                    plantsRepository.insertPlant(plant)
+                }
+            }
         }
-        plantsRepository.setPlantList(listOfNonTriggeredPlants)
     }
 
-    fun removePlant (position : Int) {
-        val __plantList = plantList.value ?: mutableListOf<Plant>()
-        deletedPlant = __plantList?.get(position)
-        __plantList?.removeAt(position)
-        plantsRepository.setPlantList(__plantList)
-    }
-
-    fun returnRemovedPlant (position: Int) {
-        val __plantList = plantList.value ?: mutableListOf<Plant>()
-        __plantList.add(position, deletedPlant)
-        plantsRepository.setPlantList(__plantList)
+    fun returnRemovedPlant(plant: Plant) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                plantsRepository.insertPlant(plant)
+            }
+        }
     }
 
     companion object {

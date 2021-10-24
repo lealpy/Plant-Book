@@ -10,8 +10,10 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.example.plantsbook.R
 import com.example.plantsbook.data.models.Plant
 import com.example.plantsbook.databinding.FragmentGardenBinding
+import com.example.plantsbook.presentation.plant_state.PlantStateFragment
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -22,12 +24,19 @@ class GardenFragment : Fragment() {
 
     private val viewModel: GardenViewModel by viewModels()
 
-    val plantAdapter = PlantAdapter()
+    val plantAdapter = GardenAdapter(object : GardenAdapter.OnItemClickListener {
+        override fun onItemClick(plant: Plant) {
+            parentFragmentManager
+                .beginTransaction()
+                .add(R.id.activity_frame_layout, PlantStateFragment.newInstance(plant.id ?: -1))
+                .commit()
+        }
+    })
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         binding = FragmentGardenBinding.inflate(inflater)
         return binding.root
     }
@@ -36,6 +45,12 @@ class GardenFragment : Fragment() {
         initObservers()
         initRecyclerView()
         initViews()
+    }
+
+    private fun initObservers() {
+        viewModel.getPlantsLd().observe(viewLifecycleOwner) { plants ->
+            plantAdapter.submitList(plants.sortedBy { plant -> plant.id })
+        }
     }
 
     private fun initRecyclerView() {
@@ -57,17 +72,16 @@ class GardenFragment : Fragment() {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-
-                val removedPlantPosition = viewHolder.adapterPosition
-                //Удаляем растение по свайпу
-                viewModel.removePlant(removedPlantPosition)
+                val position = viewHolder.layoutPosition
+                val plant = plantAdapter.getPlantItem(position)
+                viewModel.deletePlant(plant)
 
                 //Восстанавливаем ошибочно удаленное растение
                 Snackbar.make(requireView(), "Растение удалено", Snackbar.LENGTH_SHORT)
                     .setAction("Вернуть") {
-                        viewModel.returnRemovedPlant(removedPlantPosition)
+                        viewModel.returnRemovedPlant(plant)
                         // Автоматическая прокрутка на восстановленную позицию
-                        binding.recyclerView.smoothScrollToPosition(removedPlantPosition)
+                        binding.recyclerView.smoothScrollToPosition(position)
                     }.show()
             }
         }
@@ -75,32 +89,20 @@ class GardenFragment : Fragment() {
 
     }
 
-    private fun initObservers() {
-        viewModel.plantList.observe(viewLifecycleOwner) { __plantList ->
-            plantAdapter.setData(__plantList)
-        }
-    }
-
     private fun initViews() {
         //Добавляем случайное растение
         binding.buttonAddRandomPlant.setOnClickListener {
-            viewModel.addRandomPlant()
-            binding.recyclerView.adapter = plantAdapter // Перестраиваем recycler для обновления индикаторов
+            viewModel.insertRandomPlant()
         }
 
         binding.buttonNextDay.setOnClickListener {
-            nextDay()
-            binding.recyclerView.adapter = plantAdapter // Перестраиваем recycler для обновления индикаторов
+            viewModel.nextDay()
         }
 
         binding.buttonRefresh?.setOnClickListener {
-            binding.recyclerView.adapter = plantAdapter // Перестраиваем recycler для обновления индикаторов
+            binding.recyclerView.adapter =
+                plantAdapter // Перестраиваем recycler для обновления индикаторов
         }
-    }
-
-    private fun nextDay() {
-        viewModel.nextDay()
-        binding.recyclerView.adapter = plantAdapter // Перестраиваем recycler для обновления индикаторов
     }
 
     private fun getSpanCount(): Int {

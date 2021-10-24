@@ -12,20 +12,16 @@ class MainViewModel @Inject constructor(
 
 ) : ViewModel() {
 
-    private val _navigationPath = MutableLiveData<NavPath>(NavPath.GardenNavPath(null))
+    private val _navigationPath = MutableLiveData<NavPath>(NavPath.GardenNavPath)
     val navigationPath: LiveData<NavPath> = _navigationPath
 
-    fun onNavDrawerClicked() {
-        _navigationPath.value = NavPath.GardenNavPath(null)
+    fun onNavDrawerClicked(navPath: NavPath) {
+        _navigationPath.value = navPath
     }
 
-    fun onNavDrawerClicked(plantType: PlantType) {
-        _navigationPath.value = NavPath.PlantInfoNavPath(plantType)
-    }
-
-    sealed class NavPath(plantType: PlantType?) {
-        data class GardenNavPath(val plantType: PlantType?) : NavPath(plantType)
-        data class PlantInfoNavPath(val plantType: PlantType?) : NavPath(plantType)
+    sealed class NavPath {
+        object GardenNavPath : NavPath()
+        object LibraryNavPath : NavPath()
     }
 
 }
