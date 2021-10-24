@@ -1,7 +1,10 @@
 package com.example.plantsbook.di
 
 import android.content.Context
+import androidx.room.Room
 import com.example.plantsbook.ResourceManager
+import com.example.plantsbook.data.database.AppDatabase
+import com.example.plantsbook.data.database.PlantDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,5 +21,21 @@ class AppModule {
     fun provideResourceManager(
         @ApplicationContext context: Context
     ): ResourceManager = ResourceManager(context.resources)
+
+    @Provides
+    @Singleton
+    fun provideAppDatabase(@ApplicationContext appContext: Context): AppDatabase {
+        return Room.databaseBuilder(
+            appContext,
+            AppDatabase::class.java,
+            "app.db"
+        ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun providePlantDao(appDatabase: AppDatabase): PlantDao {
+        return appDatabase.plantDao()
+    }
 
 }
